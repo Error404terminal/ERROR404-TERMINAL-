@@ -13,6 +13,10 @@ import {
 } from "./db/sqlite.js";
 
 import {
+  PumpScanner
+} from "./scanner/scanner.js";
+
+import {
   logger
 } from "./utils/logger.js";
 
@@ -21,12 +25,17 @@ async function main() {
 
   runMigrations();
 
+  const scanner =
+    new PumpScanner();
+
+  await scanner.start();
+
   logger.info(
     "Database initialized."
   );
 
   logger.info(
-    "Starting Pump.fun Auto Bot Phase 1 + Phase 2..."
+    "Pump.fun discovery engine initialized."
   );
 
   await bot.start({
@@ -49,7 +58,7 @@ async function shutdown(
     await bot.stop();
   } catch (error) {
     logger.error(
-      "Failed to stop bot",
+      "Failed to stop Telegram bot.",
       error
     );
   }
@@ -58,7 +67,7 @@ async function shutdown(
     closeDatabase();
   } catch (error) {
     logger.error(
-      "Failed to close database",
+      "Failed to close database.",
       error
     );
   }
@@ -83,7 +92,7 @@ process.once(
 main().catch(
   (error) => {
     logger.error(
-      "Fatal startup error",
+      "Fatal startup error.",
       error
     );
 
